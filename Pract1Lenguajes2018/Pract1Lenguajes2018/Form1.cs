@@ -16,5 +16,19 @@ namespace Pract1Lenguajes2018
         {
             InitializeComponent();
         }
+
+        private void nuevaPestañaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            tabControl1.TabPages.Add("Nueva Pestaña");
+            
+
+            
+        }
+
+        private void acercaDeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Creado por Manuel Rivera, 201212747");
+        }
     }
 }

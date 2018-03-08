@@ -13,7 +13,8 @@ namespace Pract1Lenguajes2018
         int total = 0;
         int cantidad = 0; 
         String auxiliar = "";
-      
+      List<token> ListaT = new List<token>();
+      List<error> ListaER = new List<error>();
 
 
 
@@ -304,9 +305,9 @@ namespace Pract1Lenguajes2018
         //Agregar a Lista de errores, limpiar y luego regresar al estado 0
         public void AgregarAErrores(string lexema, string tipo)
         {
-            Er.Lexema = lexema;
-            Er.Tipo = tipo;
-            ListaErrores.Add(Er);
+
+            ListaER.Add(new error(lexema, tipo));
+           
             auxiliar = "";
             estadoActual = 0;
         }
@@ -314,9 +315,8 @@ namespace Pract1Lenguajes2018
         //Agregar a Lista, limpiar y luego regresar al estado 0
         public void AgregarALista(string lexema, string tipo)
         {
-            to.lexema = lexema;
-            to.tipo = tipo;
-            ListaTokens.Add(to);
+
+            ListaT.Add(new token(lexema, tipo));
             auxiliar = "";
             estadoActual = 0; 
 
