@@ -184,7 +184,7 @@ namespace Pract1Lenguajes2018
                         }
                         else
                         {
-                            estadoActual = 999;
+                            estadoActual = 888;
                             auxiliar += caracter;
                         }
 
@@ -247,14 +247,54 @@ namespace Pract1Lenguajes2018
                         }
                         break;
                     case 666:
-                        // ERROR DE
+                        //ERRORES DE IDENTIFICADORES
+                        if ((Espacio(caracter)) || (Saltos(caracter)))
+                        {
+                            AgregarAErrores(auxiliar, "IdentificadorInv");
+                        }
+                        else
+                        {
+                            estadoActual = 666;
+                            auxiliar += caracter;
+                        }
                         break;
 
                     case 777:
-                        // ERROR DE
+                        // ERROR DE NUMEROS
+                        if ((Espacio(caracter)) || (Saltos(caracter)))
+                        {
+                            AgregarAErrores(auxiliar, "NumeroInvalido");
+                        }
+                        else
+                        {
+                            estadoActual = 777;
+                            auxiliar += caracter;
+                        }
                         break;
                     case 888:
-                        // ERROR DE
+                        // ERROR DE COMENTARIOS LINEALES
+                        if (Saltos(caracter))
+                        {
+                            AgregarAErrores(auxiliar, "ComentarioINVALIDO");
+                        }
+                        else
+                        {
+                            estadoActual = 888;
+                            auxiliar += caracter;
+                        }
+                        break; 
+                    case 999:
+                        // ERRORES DE COMENTARIOS EXTENSOS
+                        if (Slash(caracter))
+                        {
+                            auxiliar += caracter;
+                            AgregarAErrores(auxiliar, "ComentarioInval");
+                        }
+                        else
+                        {
+                            estadoActual = 999;
+                            auxiliar += caracter;
+                        }
                         break; 
                 }
 
