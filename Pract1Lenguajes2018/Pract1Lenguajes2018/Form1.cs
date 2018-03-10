@@ -51,7 +51,8 @@ namespace Pract1Lenguajes2018
 
         private void archivosDeSalidaToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            scanner s = new scanner();
+            s.generarHTML();
         }
 
         private void buscarCoincidenciasToolStripMenuItem_Click(object sender, EventArgs e)
@@ -93,6 +94,16 @@ namespace Pract1Lenguajes2018
 
         private void guardarArchivoToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            SaveFileDialog sf = new SaveFileDialog();
+            if (sf.ShowDialog() == DialogResult.OK)
+            {
+                using (Stream s = File.Open(sf.FileName, FileMode.CreateNew))
+                using (StreamWriter sw = new StreamWriter(s))
+                {
+                    sw.Write(getRichTextBox().Text);
+                }
+
+            }
 
         }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Pract1Lenguajes2018
 {
@@ -17,7 +18,7 @@ namespace Pract1Lenguajes2018
       List<error> ListaER = new List<error>();
 
 
-
+        //Aquí está programado todo el autómata
         public void Analizador(string cadena)
         {
            
@@ -318,14 +319,51 @@ namespace Pract1Lenguajes2018
 
             ListaT.Add(new token(lexema, tipo));
             auxiliar = "";
-            estadoActual = 0; 
-
+            estadoActual = 0;
+            Console.WriteLine(ListaT[0].Lexema);
             
         }
-        
+
+
+        //GENERA UN HTML CON TODOS LOS ELEMENTOS GUARDADOS EN LAS LISTAS
+        public void generarHTML()
+        {
+            StreamWriter html = new StreamWriter("salida.html");
+            html.Write("<html>");
+            html.Write("<head>");
+            html.Write("Archivo de Salida, bienvenidos sean, UNIVERSIDAD DE SAN CARLOS DE GUATEMALA");
+            html.Write("</head>");
+            html.Write("<body>");
+            html.Write("<p> Tabla de Tokens </p>");
+            html.Write("<table>");
+            html.Write("<tr>");
+            html.Write("<th> Token </th>");
+            html.Write("<th> Lexema </th>");
+            html.Write("</tr>");
+            for (int i = 0; i <= ListaT.Count -1; i++)
+            {
+                html.Write("<tr>");
+                html.Write("<td>" + ListaT[i].Lexema + "</td>");
+
+                html.Write("<td>" + ListaT[i].Tipo + "</td>");
+                html.Write("</tr>");
+            }
+          
+            html.Write("</body>");
+            html.Write("</html>");
+            html.Close();
+            Console.WriteLine("Cantidad en la lista" + ListaT.Count);
+
+        }
+
+
+
         //Analizar la cadena en búsqueda de plagio
         //INSERTE METODO AQUÍ
+        public void Buscador(string cadena)
+        {
 
+        }
         //Todos estos métodos son para reconocer un caracter en específico, valuándolos con su valor en ASCII
         public Boolean CaracterMinuscula(char valor)
         {
