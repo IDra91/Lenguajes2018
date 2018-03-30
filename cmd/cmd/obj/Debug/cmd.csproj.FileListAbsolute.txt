@@ -1,0 +1,6 @@
+c:\users\manu9\documents\visual studio 2013\Projects\cmd\cmd\bin\Debug\cmd.exe.config
+c:\users\manu9\documents\visual studio 2013\Projects\cmd\cmd\obj\Debug\cmd.csprojResolveAssemblyReference.cache
+c:\users\manu9\documents\visual studio 2013\Projects\cmd\cmd\bin\Debug\cmd.exe
+c:\users\manu9\documents\visual studio 2013\Projects\cmd\cmd\bin\Debug\cmd.pdb
+c:\users\manu9\documents\visual studio 2013\Projects\cmd\cmd\obj\Debug\cmd.exe
+c:\users\manu9\documents\visual studio 2013\Projects\cmd\cmd\obj\Debug\cmd.pdb
