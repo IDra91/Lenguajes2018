@@ -12,7 +12,8 @@ namespace Pract1Lenguajes2018
         char caracter;
         int estadoActual = 0;
         int total = 0;
-        int cantidad = 0; 
+        int cantidad = 0;
+        double porcentaje;
         String auxiliar = "";
       List<token> ListaT = new List<token>();
       List<error> ListaER = new List<error>();
@@ -54,11 +55,13 @@ namespace Pract1Lenguajes2018
                         {
                             estadoActual = 6;
                             auxiliar += caracter;
+                            Console.WriteLine("Así va la cadena -->" + auxiliar);
                         }
                         else if ((Espacio(caracter)) || (Saltos(caracter)))
                         {
                             estadoActual = 0;
                         }
+
                         else
                         {
                             estadoActual = 0;
@@ -173,16 +176,19 @@ namespace Pract1Lenguajes2018
                         {
                             estadoActual = 7;
                             auxiliar += caracter;
+                            Console.WriteLine("Así va la cadena -->" + auxiliar);
                         }
                         else if (Asterisco(caracter))
                         {
                             estadoActual = 8;
                             auxiliar += caracter;
+                            Console.WriteLine("Así va la cadena -->" + auxiliar);
 
                         }
                         else if (Espacio(caracter))
                         {
                             estadoActual = 6;
+                           
                         }
                         else
                         {
@@ -195,19 +201,22 @@ namespace Pract1Lenguajes2018
                         if ((CaracterMayuscula(caracter)) || (CaracterMinuscula(caracter)) || (CaracterNumerico(caracter)))
                         {
                             estadoActual = 7;
-                            auxiliar += caracter; 
+                            auxiliar += caracter;
+                            Console.WriteLine("Así va la cadena -->" + auxiliar);
                         } else if(Espacio(caracter)){
                             estadoActual = 7;
                             auxiliar += caracter;
+                            Console.WriteLine("Así va la cadena -->" + auxiliar);
                         }
                         else if (Saltos(caracter))
                         {
-                            AgregarALista(auxiliar, "comentario de linea");
+                            AgregarALista(auxiliar, "Comentario");
                         }
                         else
                         {
                             estadoActual = 7;
-                            auxiliar += caracter; 
+                            auxiliar += caracter;
+                            Console.WriteLine("Así va la cadena -->" + auxiliar);
                         }
                         break; 
                     case 8:
@@ -298,6 +307,7 @@ namespace Pract1Lenguajes2018
                             auxiliar += caracter;
                         }
                         break; 
+                    
                 }
 
             }
@@ -320,14 +330,64 @@ namespace Pract1Lenguajes2018
             ListaT.Add(new token(lexema, tipo));
             auxiliar = "";
             estadoActual = 0;
-            Console.WriteLine(ListaT[0].Lexema);
+            Console.WriteLine("Esto tiene la lista ---->"+ListaT.Count);
             
         }
 
+        //BUSCADOR EN CADA PARTE DE LA LISTA PARA ENCONTRAR IGUALDADES
+
+        public Boolean Similitud(string palabra)
+        {
+           
+            for (int i = 0; i <= ListaT.Count - 1; i++)
+            {
+                if (palabra == ListaT[i].Lexema)
+                {
+
+                    cantidad = cantidad + 1;
+                    auxiliar = "";
+                    estadoActual = 0;
+                    return true;
+
+
+
+                }
+                else
+                {
+                    auxiliar = "";
+                    estadoActual = 0;
+                }
+            } return false; 
+        }
+
+        //BUSCADOR EN CADA PARTE DE LA LISTA PARA ENCONTRAR IGUALDADES
+
+        public Boolean SimilitudErrores(string palabra)
+        {
+            
+            for (int i = 0; i <= ListaER.Count - 1; i++)
+            {
+                if (palabra == ListaER[i].Lexema)
+                {
+
+                    cantidad = cantidad + 1;
+                    auxiliar = "";
+                    estadoActual = 0;
+                    return true;
+                    
+                }
+                else
+                {
+                    auxiliar = "";
+                    estadoActual = 0;
+                }
+            } return false;
+        }
 
         //GENERA UN HTML CON TODOS LOS ELEMENTOS GUARDADOS EN LAS LISTAS
         public void generarHTML()
         {
+            Console.WriteLine("Cantidad en la lista" + ListaT.Count);
             StreamWriter html = new StreamWriter("salida.html");
             html.Write("<html>");
             html.Write("<head>");
@@ -343,16 +403,31 @@ namespace Pract1Lenguajes2018
             for (int i = 0; i <= ListaT.Count -1; i++)
             {
                 html.Write("<tr>");
-                html.Write("<td>" + ListaT[i].Lexema + "</td>");
+                html.Write("<td>" + this.ListaT[i].Lexema + "</td>");
 
-                html.Write("<td>" + ListaT[i].Tipo + "</td>");
+                html.Write("<td>" + this.ListaT[i].Tipo + "</td>");
                 html.Write("</tr>");
             }
-          
+            html.WriteLine("</table>");
+            html.Write("<p> Tabla de Errores </p>");
+            html.Write("<table>");
+            html.Write("<tr>");
+            html.Write("<th> Token </th>");
+            html.Write("<th> Lexema </th>");
+            html.Write("</tr>");
+            for (int j = 0; j <= ListaER.Count - 1; j++)
+            {
+                html.Write("<tr>");
+                html.Write("<td>" + this.ListaER[j].Lexema + "</td>");
+
+                html.Write("<td>" + this.ListaER[j].Tipo + "</td>");
+                html.Write("</tr>");
+            }
+            html.WriteLine("</table>");
             html.Write("</body>");
             html.Write("</html>");
             html.Close();
-            Console.WriteLine("Cantidad en la lista" + ListaT.Count);
+            
 
         }
 
@@ -362,8 +437,331 @@ namespace Pract1Lenguajes2018
         //INSERTE METODO AQUÍ
         public void Buscador(string cadena)
         {
+            total = cadena.Length;
+            for (int i = 0; i < cadena.Length; i++)
+            {
+
+                caracter = cadena[i];
+                // Esto lo que hace es que separa la cadena que necesitás en caracteres
+                switch (estadoActual)
+                {
+                    // Con esto te vas moviendo en el autómata que vos mismo pensás que funciona en el lenguaje
+                    case 0:
+                        if ((CaracterMayuscula(caracter)) || (CaracterMinuscula(caracter)))
+                        {
+                            estadoActual = 1;
+                            auxiliar += caracter;
+                            Console.WriteLine("Así va la cadena ----> " + auxiliar);
+
+                        }
+                        else if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 3;
+                            auxiliar += caracter;
+
+                            Console.WriteLine("Así va la cadena ----> " + auxiliar);
+
+                        }
+                        else if ((Suma(caracter)) || (Resta(caracter)))
+                        {
+                            estadoActual = 2;
+                            auxiliar += caracter;
+                        }
+                        else if (Slash(caracter))
+                        {
+                            estadoActual = 6;
+                            auxiliar += caracter;
+                            Console.WriteLine("Así va la cadena -->" + auxiliar);
+                        }
+                        else if ((Espacio(caracter)) || (Saltos(caracter)))
+                        {
+                            estadoActual = 0;
+                        }
+
+                        else
+                        {
+                            estadoActual = 0;
+                            auxiliar += caracter;
+                        }
+                        break;
+
+                    case 1:
+                        if (CaracterMinuscula(caracter))
+                        {
+                            auxiliar += caracter;
+                            estadoActual = 1;
+
+                            Console.WriteLine("Así va la cadena ----> " + auxiliar);
+                        }
+                        else if ((Punto(caracter)) || (Coma(caracter)))
+                        {
+                            Similitud(auxiliar);
+                            porcentaje = cantidad / total;
+
+                        }
+                        else if ((Espacio(caracter)) || (Saltos(caracter)))
+                        {
+                            Similitud(auxiliar);
+                            porcentaje = cantidad / total;
+                        }
+                        else if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 666;
+                            auxiliar += caracter;
+                        }
+                        else
+                        {
+                            estadoActual = 1;
+                            auxiliar += caracter;
+                        }
+                        break;
+                    case 2:
+                        if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 3;
+                            auxiliar += caracter;
+                        }
+                        else if ((Espacio(caracter)) || (Saltos(caracter)))
+                        {
+                            estadoActual = 2;
+                        }
+                        else
+                        {
+                            estadoActual = 777;
+                            auxiliar += caracter;
+                        }
+                        break;
+                    case 3:
+                        if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 3;
+                            auxiliar += caracter;
+                        }
+                        else if (Punto(caracter))
+                        {
+                            estadoActual = 4;
+                            auxiliar += caracter;
+
+                        }
+                        else if (Coma(caracter))
+                        {
+
+                            Similitud(auxiliar);
+                            porcentaje = cantidad / total;
+                        }
+                        else if ((Espacio(caracter)) || (Saltos(caracter)))
+                        {
+
+                            Similitud(auxiliar);
+                        }
+                        else
+                        {
+                            estadoActual = 777;
+                            auxiliar += caracter;
+                        }
+                        break;
+                    case 4:
+                        if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 5;
+                            auxiliar += caracter;
+                        }
+                        else if ((Espacio(caracter)) || (Saltos(caracter)))
+                        {
+                            estadoActual = 4;
+                        }
+                        else
+                        {
+                            estadoActual = 777;
+                            auxiliar += caracter;
+                        }
+                        break;
+                    case 5:
+                        if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 5;
+                            auxiliar += caracter;
+
+                        }
+                        else if ((Coma(caracter)) || (Punto(caracter)))
+                        {
+
+                            Similitud(auxiliar);
+                            porcentaje = cantidad / total;
+                        }
+                        else if ((Espacio(caracter)) || (Saltos(caracter)))
+                        {
+
+                            Similitud(auxiliar);
+                            porcentaje = cantidad / total;
+                        }
+                        else
+                        {
+                            estadoActual = 777;
+                            auxiliar += caracter;
+                        }
+                        break;
+                    case 6:
+                        // AQUÍ VAN LOS COMENTARIOS
+                        if (Slash(caracter))
+                        {
+                            estadoActual = 7;
+                            auxiliar += caracter;
+                            Console.WriteLine("Así va la cadena -->" + auxiliar);
+                        }
+                        else if (Asterisco(caracter))
+                        {
+                            estadoActual = 8;
+                            auxiliar += caracter;
+                            Console.WriteLine("Así va la cadena -->" + auxiliar);
+
+                        }
+                        else if (Espacio(caracter))
+                        {
+                            estadoActual = 6;
+
+                        }
+                        else
+                        {
+                            estadoActual = 888;
+                            auxiliar += caracter;
+                        }
+
+                        break;
+                    case 7:
+                        if ((CaracterMayuscula(caracter)) || (CaracterMinuscula(caracter)) || (CaracterNumerico(caracter)))
+                        {
+                            estadoActual = 7;
+                            auxiliar += caracter;
+                            Console.WriteLine("Así va la cadena -->" + auxiliar);
+                        }
+                        else if (Espacio(caracter))
+                        {
+                            estadoActual = 7;
+                            auxiliar += caracter;
+                            Console.WriteLine("Así va la cadena -->" + auxiliar);
+                        }
+                        else if (Saltos(caracter))
+                        {
+
+                            Similitud(auxiliar);
+                            porcentaje = cantidad / total;
+                        }
+                        else
+                        {
+                            estadoActual = 7;
+                            auxiliar += caracter;
+                            Console.WriteLine("Así va la cadena -->" + auxiliar);
+                        }
+                        break;
+                    case 8:
+                        if ((CaracterMayuscula(caracter)) || (CaracterMinuscula(caracter)) || (CaracterNumerico(caracter)))
+                        {
+                            estadoActual = 8;
+                            auxiliar += caracter;
+                        }
+                        else if (Espacio(caracter))
+                        {
+                            estadoActual = 8;
+                            auxiliar += caracter;
+                        }
+                        else if (Saltos(caracter))
+                        {
+                            estadoActual = 8;
+                        }
+                        else if (Asterisco(caracter))
+                        {
+                            estadoActual = 9;
+                            auxiliar += caracter;
+                        }
+                        else
+                        {
+                            estadoActual = 8;
+                            auxiliar += caracter;
+                        }
+                        break;
+                    case 9:
+                        if (Slash(caracter))
+                        {
+                            auxiliar += caracter;
+
+                            Similitud(auxiliar);
+                            porcentaje = cantidad / total;
+                        }
+                        else
+                        {
+                            estadoActual = 999;
+                            auxiliar += caracter;
+                        }
+                        break;
+                    case 666:
+                        //ERRORES DE IDENTIFICADORES
+                        if ((Espacio(caracter)) || (Saltos(caracter)))
+                        {
+                            SimilitudErrores(auxiliar);
+                            porcentaje = cantidad / total;
+                        }
+                        else
+                        {
+                            estadoActual = 666;
+                            auxiliar += caracter;
+                        }
+                        break;
+
+                    case 777:
+                        // ERROR DE NUMEROS
+                        if ((Espacio(caracter)) || (Saltos(caracter)))
+                        {
+
+                            SimilitudErrores(auxiliar);
+                            porcentaje = cantidad / total;
+                        }
+                        else
+                        {
+                            estadoActual = 777;
+                            auxiliar += caracter;
+                        }
+                        break;
+                    case 888:
+                        // ERROR DE COMENTARIOS LINEALES
+                        if (Saltos(caracter))
+                        {
+
+                            SimilitudErrores(auxiliar);
+                            porcentaje = cantidad / total;
+                        }
+                        else
+                        {
+                            estadoActual = 888;
+                            auxiliar += caracter;
+                        }
+                        break;
+                    case 999:
+                        // ERRORES DE COMENTARIOS EXTENSOS
+                        if (Slash(caracter))
+                        {
+                            auxiliar += caracter;
+                            SimilitudErrores(auxiliar);
+                            porcentaje = cantidad / total;
+                        }
+                        else
+                        {
+                            estadoActual = 999;
+                            auxiliar += caracter;
+                        }
+                        break;
+
+                }
+
+            }
 
         }
+
+        public double RetornarTotal()
+        {
+            return total;
+        }
+
         //Todos estos métodos son para reconocer un caracter en específico, valuándolos con su valor en ASCII
         public Boolean CaracterMinuscula(char valor)
         {
@@ -406,7 +804,7 @@ namespace Pract1Lenguajes2018
 
         public Boolean Saltos(char valor)
         {
-            if (valor == 13)
+            if (valor == 10)
             {
                 return true;
             }

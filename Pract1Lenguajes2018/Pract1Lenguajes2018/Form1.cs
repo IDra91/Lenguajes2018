@@ -15,6 +15,9 @@ namespace Pract1Lenguajes2018
 {
     public partial class Form1 : Form
     {
+        scanner s = new scanner();
+        string real; 
+
         public Form1()
         {
             InitializeComponent();
@@ -43,7 +46,7 @@ namespace Pract1Lenguajes2018
 
         private void análisisLéxicoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            scanner s = new scanner();
+           
             s.Analizador(getRichTextBox().Text);
 
             
@@ -51,13 +54,13 @@ namespace Pract1Lenguajes2018
 
         private void archivosDeSalidaToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            scanner s = new scanner();
             s.generarHTML();
         }
 
         private void buscarCoincidenciasToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            s.Buscador(getRichTextBox().Text);
+            MessageBox.Show("El total de plagio es: " + s.RetornarTotal().ToString());
         }
 
         private RichTextBox getRichTextBox()
