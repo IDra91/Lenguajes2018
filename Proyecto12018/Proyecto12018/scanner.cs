@@ -20,7 +20,8 @@ namespace Proyecto12018
         String direccion = "";
         List<token> ListaT = new List<token>();
         List<error> ListaER = new List<error>();
-        string raiz = @"C:\Users\manu9\Desktop";
+        string raiz = @"C:\PROYECTO\";
+        bool edicion = false; 
 
         //Aquí está programado todo el autómata
         public void Analizador(string cadena)
@@ -41,9 +42,14 @@ namespace Proyecto12018
                         }
                         else if (CaracterMinuscula(caracter))
                         {
-                            estadoActual = 111;
+                            estadoActual = 2;
                             auxiliar += caracter;
                             Console.WriteLine("Así va la cadena ----> " + auxiliar);
+                            Console.WriteLine("Número de estado --->" + estadoActual);
+                        }
+                        else if (Espacio(caracter))
+                        {
+                            estadoActual = 0; 
                         }
                         else
                         {
@@ -68,6 +74,7 @@ namespace Proyecto12018
                             {
                                 //SE VA A UN ESTADO PARA RECIVIR EL NOMBRE DE LA CARPETA ✓✓
                                 AgregarALista(auxiliar, "Reservada CrearCarpeta", 11);
+                                Console.WriteLine("Este es el estado --->" + estadoActual);
                             }
                             else if (auxiliar == "AbrirC")
                             {
@@ -144,6 +151,7 @@ namespace Proyecto12018
                             }
                             else if (auxiliar == "abrirArchivo")
                             {
+                                AbrirArchivo(auxiliar);
                                 //AQUÍ SE VA A UN ESTADO, EN EL QUE RECIBIRÁ EL NOMBRE DE UN ARCHIVO Y SE ABRIRÁ ✓
                                 AgregarALista(auxiliar, "Reservada AbrirArchivo", 55);
                             }
@@ -165,7 +173,7 @@ namespace Proyecto12018
                             else if (auxiliar == "eliminarA")
                             {
                                 //AQUÍ SE VA A UN ESTADO, RECIBIRÁ EL NOMBRE DEL ARCHIVO Y LO ELIMINARÁ ✓
-                                AgregarALista(auxiliar, "Reservada Eliminar_Archivo", 222);
+                                AgregarALista(auxiliar, "Reservada Eliminar_Archivo", 99);
                             }
                             else if (auxiliar == "cargar")
                             {
@@ -181,7 +189,7 @@ namespace Proyecto12018
                         {
                             if (auxiliar == "acercaDe")
                             {
-                                Console.WriteLine("Hecho por Manuel Rivera, 201212747, Lenguajes Formales");
+                                MessageBox.Show("Hecho por Manuel Rivera, 201212747, Lenguajes Formales");
                                 AgregarALista(auxiliar, "Reservada Acerca_De", 0);
                             }
                             else
@@ -681,6 +689,7 @@ namespace Proyecto12018
                     case 100:
                         if (Saltos(caracter))
                         {
+                            EliminarArchivos(auxiliar);
                             AgregarALista(auxiliar, "Nombre", 0);
                             // AGREGAR MÉTODO PARA ELIMINAR ARCHIVOS
 
@@ -863,12 +872,68 @@ namespace Proyecto12018
                 html.Write("<td>" + ListaT[i].Tipo + "</td>");
                 html.Write("</tr>");
             }
+            html.WriteLine("</table>");
+            html.Write("<p> Tabla de Errores </p>");
+            html.Write("<table>");
+            html.Write("<tr>");
+            html.Write("<th> Token </th>");
+            html.Write("<th> Lexema </th>");
+            html.Write("</tr>");
+            for (int j = 0; j <= ListaER.Count - 1; j++)
+            {
+                html.Write("<tr>");
+                html.Write("<td>" + this.ListaER[j].Lexema + "</td>");
 
+                html.Write("<td>" + this.ListaER[j].Tipo + "</td>");
+                html.Write("</tr>");
+            }
+            html.WriteLine("</table>");
             html.Write("</body>");
             html.Write("</html>");
             html.Close();
             Console.WriteLine("Cantidad en la lista" + ListaT.Count);
 
+        }
+
+        //Carga y lectura de archivos
+        public string AbrirArchivo(string nombre)
+        {
+            for (int i = ListaT.Count - 1; i >= 0; i--)
+            {
+                if (ListaT[i].Tipo == "Direccion")
+                {
+                    if (System.IO.File.Exists(raiz + ListaT[i].Lexema + ".lfp"))
+                    {
+                        return File.ReadAllText(raiz + ListaT[i].Lexema + nombre + ".lfp");
+                        edicion = true; 
+
+                    }
+                    else
+                    {
+                        i--;
+                    }
+                }
+                else
+                {
+                    if (i == 0)
+                    {
+                        return File.ReadAllText(raiz + nombre + ".lfp");
+                        edicion = true; 
+                    }
+                    else
+                    {
+                        i--;
+                    }
+                }
+
+            } return "";
+
+        }
+
+        //RETORNO DE EDICION
+        public bool RetornarEdicion()
+        {
+            return edicion; 
         }
 
         // Método para renombrar archivos
@@ -883,6 +948,7 @@ namespace Proyecto12018
             if (Directory.Exists(raiz + nombre))
             {
                 Directory.Delete(raiz + nombre);
+                MessageBox.Show("Se ha borrado con éxito :D");
             }
             else
             {
@@ -900,7 +966,8 @@ namespace Proyecto12018
                     if (Directory.Exists(raiz + ListaT[i].Lexema + nombreviejo))
                     {
                         Directory.Move(raiz + ListaT[i].Lexema + nombreviejo, raiz + ListaT[i].Lexema + nombrenuevo);
-                        i = 0; 
+                        i = 0;
+                        MessageBox.Show("Se ha renombrado :D");
                     }
                     else
                     {
@@ -909,11 +976,51 @@ namespace Proyecto12018
                 }
                 else
                 {
-                    i--; 
+                    if (i == 0)
+                    {
+                        Directory.Move(raiz + nombreviejo, raiz + nombrenuevo);
+                        MessageBox.Show("Se ha renombrado :D");
+                    }
+                    else
+                    {
+                        i--;
+                    }
+                     
                 }
             }
         }
-
+        // METODO PARA ELIMINAR ARCHIVOS
+        public void EliminarArchivos(string nombre)
+        {
+            for (int i = ListaT.Count - 1; i >= 0; i--)
+            {
+                if (ListaT[i].Tipo == "Direccion")
+                {
+                    if (File.Exists(raiz + ListaT[i].Lexema + ".lfp"))
+                    {
+                        
+                        File.Delete(raiz + ListaT[i].Lexema + nombre + ".lfp");
+                        MessageBox.Show("El archivo se ha eliminado :D");
+                    }
+                    else
+                    {
+                        MessageBox.Show("El archivo no existe");
+                    }
+                }
+                else
+                {
+                    if (i == 0)
+                    {
+                        File.Delete(raiz + nombre + ".lfp");
+                        MessageBox.Show("El archivo se ha eliminado :D");
+                    }
+                    else
+                    {
+                        i--;
+                    }
+                }
+            }
+        }
         // METDODO DE AGREGAR CARPETAS
         public void CrearCarpeta(string nombre)
         {
@@ -934,7 +1041,7 @@ namespace Proyecto12018
             {
                 if (ListaT[i].Tipo == "Direccion")
                 {
-                    if (System.IO.File.Exists(raiz + ListaT[i].Lexema))
+                    if (System.IO.File.Exists(raiz + ListaT[i].Lexema + ".lfp"))
                     {
                         MessageBox.Show("El fichero ya existe");
                     }
@@ -946,7 +1053,14 @@ namespace Proyecto12018
                 }
                 else
                 {
-                    i--;
+                    if (i == 0) {
+                        File.Create(raiz + nombre + ".lfp");
+                    }
+                    else
+                    {
+                        i--;
+                    }
+                    
                 }
             }
         }
@@ -998,7 +1112,7 @@ namespace Proyecto12018
         }
         public Boolean CaracterMayuscula(char valor)
         {
-            if ((valor > 64) & (valor < 123))
+            if ((valor > 64) & (valor < 90))
             {
                 return true;
             }

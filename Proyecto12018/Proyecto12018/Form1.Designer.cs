@@ -39,8 +39,9 @@
             this.consola.Name = "consola";
             this.consola.Size = new System.Drawing.Size(492, 239);
             this.consola.TabIndex = 0;
-            this.consola.Text = "";
-            this.consola.KeyDown += new System.Windows.Forms.KeyEventHandler(this.consola_KeyDown);
+            this.consola.Text = "mgr> ";
+            this.consola.TextChanged += new System.EventHandler(this.consola_TextChanged);
+            this.consola.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.consola_KeyPress);
             // 
             // Form1
             // 
