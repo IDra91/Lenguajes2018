@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
+using System.Diagnostics; 
 
 namespace Proyecto12018
 {
@@ -12,8 +13,6 @@ namespace Proyecto12018
     {
         char caracter;
         int estadoActual = 0;
-        int total = 0;
-        int cantidad = 0;
         String auxiliar = "";
         String nombreV = "";
         String nombreN = "";
@@ -965,6 +964,7 @@ namespace Proyecto12018
                 {
                     if (Directory.Exists(raiz + ListaT[i].Lexema + nombreviejo))
                     {
+                        
                         Directory.Move(raiz + ListaT[i].Lexema + nombreviejo, raiz + ListaT[i].Lexema + nombrenuevo);
                         i = 0;
                         MessageBox.Show("Se ha renombrado :D");
@@ -1087,7 +1087,7 @@ namespace Proyecto12018
             estadoActual = 0;
         }
 
-        //Agregar a Lista, limpiar y luego regresar al estado 0
+        //Agregar a Lista, limpiar y luego regresar al estado necesario 
         public void AgregarALista(string lexema, string tipo, int estado)
         {
 
