@@ -93,5 +93,20 @@ namespace Proyecto21sem2018
 
             }
         }
+
+        private void compilarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            s.Analizador_Lexico(getRichTextBox().Text);
+        }
+
+        private void erroresToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            s.generarHTMLErrores();
+        }
+
+        private void tokensToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            s.generarHTMLTokens();
+        }
     }
 }

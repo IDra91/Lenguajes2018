@@ -51,13 +51,18 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="pared.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="puerta.cs" />
     <Compile Include="scanner.cs" />
     <Compile Include="sErrores.cs" />
     <Compile Include="sTokens.cs" />
+    <Compile Include="suelo.cs" />
+    <Compile Include="terreno.cs" />
     <Compile Include="tokens.cs" />
     <Compile Include="variables.cs" />
+    <Compile Include="ventana.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

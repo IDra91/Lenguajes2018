@@ -1,1 +1,9 @@
 c:\users\manu9\documents\visual studio 2013\Projects\Proyecto21sem2018\Proyecto21sem2018\bin\Debug\Proyecto21sem2018.exe.config
+C:\Users\manu9\Documents\Visual Studio 2013\Projects\Proyecto21sem2018\Proyecto21sem2018\obj\Debug\Proyecto21sem2018.csprojResolveAssemblyReference.cache
+C:\Users\manu9\Documents\Visual Studio 2013\Projects\Proyecto21sem2018\Proyecto21sem2018\obj\Debug\Proyecto21sem2018.Form1.resources
+C:\Users\manu9\Documents\Visual Studio 2013\Projects\Proyecto21sem2018\Proyecto21sem2018\obj\Debug\Proyecto21sem2018.Properties.Resources.resources
+C:\Users\manu9\Documents\Visual Studio 2013\Projects\Proyecto21sem2018\Proyecto21sem2018\obj\Debug\Proyecto21sem2018.csproj.GenerateResource.Cache
+C:\Users\manu9\Documents\Visual Studio 2013\Projects\Proyecto21sem2018\Proyecto21sem2018\bin\Debug\Proyecto21sem2018.exe
+C:\Users\manu9\Documents\Visual Studio 2013\Projects\Proyecto21sem2018\Proyecto21sem2018\bin\Debug\Proyecto21sem2018.pdb
+C:\Users\manu9\Documents\Visual Studio 2013\Projects\Proyecto21sem2018\Proyecto21sem2018\obj\Debug\Proyecto21sem2018.exe
+C:\Users\manu9\Documents\Visual Studio 2013\Projects\Proyecto21sem2018\Proyecto21sem2018\obj\Debug\Proyecto21sem2018.pdb
