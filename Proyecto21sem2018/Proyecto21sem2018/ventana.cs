@@ -11,15 +11,13 @@ namespace Proyecto21sem2018
         string nombre;
         string tipo;
         int longitud;
-        double radio;
         string pared_asoc;
 
-        public ventana(string nombre, string tipo, int longitud, double radio, string pared_asoc)
+        public ventana(string nombre, string tipo, int longitud, string pared_asoc)
         {
             this.nombre = nombre;
             this.tipo = tipo;
             this.longitud = longitud;
-            this.radio = radio;
             this.pared_asoc = pared_asoc; 
         }
 
@@ -39,11 +37,7 @@ namespace Proyecto21sem2018
             set { longitud = value; }
         }
 
-        public double Radio
-        {
-            get { return radio; }
-            set { radio = value; }
-        }
+   
         public string Pared_Asoc
         {
             get { return pared_asoc; }

@@ -5,11 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
-using System.Diagnostics; 
+using System.Diagnostics;
+using System.Windows.Media.Media3D;
 namespace Proyecto21sem2018
 {
     class scanner
     {
+        int resultado = 0; 
         char caracter;
         int estadoActual = 0;
         int estadoAC = 0; 
@@ -29,6 +31,16 @@ namespace Proyecto21sem2018
         String lon = "";
         String aso = "";
         String rad = "";
+        String valor1 = "";
+        String valor2 = "";
+        int ancho;
+        double longo; 
+        int largo;
+        int Iniciox;
+        int Inicioy;
+        int FinX;
+        int FinY;
+        int radio = 0; 
         List<tokens> ListaT = new List<tokens>();
         List<errores> ListaER = new List<errores>();
         List<sTokens> ListasT = new List<sTokens>();
@@ -40,6 +52,7 @@ namespace Proyecto21sem2018
         List<terreno> Terreno = new List<terreno>();
         List<ventana> Ventana = new List<ventana>();
 
+        //MÉTODOS PARA ANÁLISIS LÉXICO Y SINTÁCTICO
         public void Analizador_Lexico(String cadena)
         {
             for (int i = 0; i < cadena.Length; i++)
@@ -54,6 +67,16 @@ namespace Proyecto21sem2018
                             estadoActual = 1;
                             auxiliar += caracter;
                             ImprimirEnConsola();
+                        }
+                        else if ((CaracterMayuscula(caracter)) || (CaracterMinuscula(caracter)))
+                        {
+                            estadoActual = 140;
+                            valor1 += caracter;
+                        }
+                        else if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 240;
+                            valor1 += caracter;
                         }
                         else
                         {
@@ -75,7 +98,12 @@ namespace Proyecto21sem2018
                         }
                         else if ((Saltos(caracter)) || (Espacio(caracter)))
                         {
-                            estadoActual = 1; 
+                            estadoActual = 1;
+                        }
+                        else if (Admiracion(caracter))
+                        {
+                            estadoActual = 130;
+                            auxiliar += caracter;
                         }
                         else
                         {
@@ -85,7 +113,7 @@ namespace Proyecto21sem2018
                         }
                         break; 
                     case 2:
-                        if ((CaracterMinuscula(caracter)) || (CaracterMayuscula(caracter)) || (EñeMinuscula(caracter)) || (EñeMayuscula(caracter)))
+                        if (Char.IsLetter(caracter))
                         {
                             estadoActual = 2;
                             auxiliar += caracter;
@@ -93,29 +121,31 @@ namespace Proyecto21sem2018
                         }
                         else if (MayorQue(caracter))
                         {
-                            
+                            auxiliar += caracter;
                             if ((auxiliar == "<diseño>") || (auxiliar == "<DISEÑO>") || (auxiliar == "<Diseño>"))
                             {
-                                auxiliar += caracter;
-                                AgregarAListaTokens(auxiliar, "Token_Etiqueta_Diseño_Abierto", 0);
+
+                                Console.WriteLine("Esto se va a agregar --->" + auxiliar);
+                                AgregarAListaTokens("< diseño >", "Token_Etiqueta_Diseño_Abierto", 0);
+                                ImprimirEnConsolaLista();
                             }
                             else if ((auxiliar == "<variables>") || (auxiliar == "<VARIABLES>") || (auxiliar == "<Variables>"))
                             {
 
-                                auxiliar += caracter;
+                               
                                 //ESTO SE VA A LA SECCION DE VARIABLES
-                                AgregarAListaTokens(auxiliar, "Token_Etiqueta_Variables_Abierto", 10);
+                                AgregarAListaTokens("< variables >", "Token_Etiqueta_Variables_Abierto", 10);
+                                ImprimirEnConsolaLista();
                             }
                             else if ((auxiliar == "<construccion>") || (auxiliar == "<CONSTRUCCION>") || (auxiliar == "<Construccion>"))
                             {
 
-                                auxiliar += caracter;
                                 //ESTO SE VA A LA SECCION DE CONSTRUCCION
-                                AgregarAListaTokens(auxiliar, "Token_Etiqueta_Construccion_Abierto", 30);
+                                AgregarAListaTokens("<  construccion  >", "Token_Etiqueta_Construccion_Abierto", 30);
+                                ImprimirEnConsolaLista();
                             }
                             else
                             {
-                                auxiliar += caracter;
                                 AgregarAListaErroresLexicos(auxiliar, "Etiqueta_Abierto_No_Valida", 0);
                             }
                         }
@@ -130,7 +160,7 @@ namespace Proyecto21sem2018
                         }
                         break; 
                     case 3:
-                        if ((CaracterMinuscula(caracter)) || (CaracterMayuscula(caracter)) || (EñeMinuscula(caracter)) || (EñeMayuscula(caracter)))
+                        if (Char.IsLetter(caracter))
                         {
                             estadoActual = 4;
                             auxiliar += caracter;
@@ -146,27 +176,29 @@ namespace Proyecto21sem2018
                         }
                         break; 
                     case 4:
-                        if ((CaracterMinuscula(caracter)) || (CaracterMayuscula(caracter)) || (EñeMinuscula(caracter)) || (EñeMayuscula(caracter)))
+                        if (Char.IsLetter(caracter))
                         {
                             estadoActual = 4;
                             auxiliar += caracter;
                         }
                         else if (MayorQue(caracter))
                         {
+                            auxiliar += caracter;
                             if ((auxiliar == "</diseño>") || (auxiliar == "</DISEÑO>") || (auxiliar == "</Diseño>"))
                             {
-                                auxiliar += caracter;
-                                AgregarAListaTokens(auxiliar, "Token_Etiqueta_Diseño_Cerrado", 120);
+
+                                AgregarAListaTokens("< /diseño >", "Token_Etiqueta_Diseño_Cerrado", 120);
+                                ImprimirEnConsolaLista();
                             }
                             else if ((auxiliar == "</variables>") || (auxiliar == "</VARIABLES>") || (auxiliar == "</Variables>"))
                             {
-                                auxiliar += caracter;
-                                AgregarAListaTokens(auxiliar, "Token_Etiqueta_Variables_Cerrado", 0);
+                                AgregarAListaTokens("<  /variables  >", "Token_Etiqueta_Variables_Cerrado", 0);
+                                ImprimirEnConsolaLista();
                             }
                             else if ((auxiliar == "</construccion>") || (auxiliar == "</CONSTRUCCION>") || (auxiliar == "</Construccion>"))
                             {
-                                auxiliar += caracter;
-                                AgregarAListaTokens(auxiliar, "Token_Etiqueta_Construccion_Cerrado", 0);
+                                AgregarAListaTokens("<  /construccion  >", "Token_Etiqueta_Construccion_Cerrado", 0);
+                                ImprimirEnConsolaLista();
                             }
                             else
                             {
@@ -191,12 +223,9 @@ namespace Proyecto21sem2018
                             auxiliar += caracter;
                         }
                         else if (MenorQue(caracter)) {
-                            estadoActual = 1; 
+                            AgregarAListaVariables(nombre, tipo, valor, 1);
                             auxiliar += caracter;
-
-                        }else if (PuntoComa(caracter)){
-                            estadoActual = 22; 
-                            auxiliar += caracter; 
+                           
 
                         }
                         else if ((Saltos(caracter)) || (Espacio(caracter)))
@@ -256,7 +285,6 @@ namespace Proyecto21sem2018
                         else
                         {
                             estadoActual = 12;
-                            nombre += caracter; 
                         }
                         break; 
                     case 13:
@@ -266,7 +294,8 @@ namespace Proyecto21sem2018
                         }
                         else if (PuntoComa(caracter))
                         {
-                            estadoActual = 22;
+                            AgregarAListaTokens(nombre, "Token_ID_Nombre", 10);
+                            AgregarAListaVariables(nombre, tipo, valor, 1);
                         }
                         else if (Espacio(caracter))
                         {
@@ -320,7 +349,8 @@ namespace Proyecto21sem2018
                         }
                         else if (PuntoComa(caracter))
                         {
-                            estadoActual = 22; 
+                            estadoActual = 22;
+                            AgregarAListaVariables(nombre, tipo, valor, 1);
                         }
                         else
                         {
@@ -355,7 +385,8 @@ namespace Proyecto21sem2018
                         }
                         else if (PuntoComa(caracter))
                         {
-                            AgregarAListaTokens(valor, "Token_ID_Cadena", 22);
+                            AgregarAListaTokens(valor, "Token_ID_Cadena", 10);
+                            AgregarAListaVariables(nombre, tipo, valor, 1);
                         }
                         else
                         {
@@ -391,7 +422,8 @@ namespace Proyecto21sem2018
                         }
                         else if (PuntoComa(caracter))
                         {
-                            AgregarAListaTokens(valor, "Token_ID_Entero", 22);
+                            AgregarAListaTokens(valor, "Token_ID_Entero", 10);
+                            AgregarAListaVariables(nombre, tipo, valor, 1);
                         }
                         else if (Espacio(caracter))
                         {
@@ -436,7 +468,8 @@ namespace Proyecto21sem2018
                         }
                         else if (PuntoComa(caracter))
                         {
-                            AgregarAListaTokens(valor, "Token_ID_Decimal", 22);
+                            AgregarAListaTokens(valor, "Token_ID_Decimal", 10);
+                            AgregarAListaVariables(nombre, tipo, valor, 1);
                         }
                         else
                         {
@@ -444,13 +477,14 @@ namespace Proyecto21sem2018
                             valor += caracter; 
                         } break; 
                     case 22:
-                        AgregarAListaVariables(nombre, tipo, valor, 10);
+                      
                         break; 
                     case 30:
                         if (MenorQue(caracter))
                         {
                             estadoActual = 31;
                             auxiliar += caracter;
+                            ImprimirEnConsola();
                         }
                         else
                         {
@@ -470,7 +504,8 @@ namespace Proyecto21sem2018
                         else if (Slash(caracter))
                         {
                             estadoActual = 33;
-                            auxiliar += caracter; 
+                            auxiliar += caracter;
+                            ImprimirEnConsola();
                         }
                         else
                         {
@@ -485,37 +520,33 @@ namespace Proyecto21sem2018
                         }
                         else if (MayorQue(caracter))
                         {
+                            auxiliar += caracter;
                             if ((auxiliar == "<terreno>") || (auxiliar == "<TERRENO>") || (auxiliar == "<Terreno>"))
-                            {
-                                auxiliar += caracter; 
-                                AgregarAListaTokens(auxiliar, "Reservada_Etiqueta_Terreno_Abierto", 40);
+                            { 
+                                AgregarAListaTokens("< terreno >", "Reservada_Etiqueta_Terreno_Abierto", 40);
                                 // ESTADO 40 
                             }
                             else if ((auxiliar == "<pared>") || (auxiliar == "<PARED>") || (auxiliar == "<Pared>"))
                             {
-                                auxiliar += caracter; 
-                                AgregarAListaTokens(auxiliar, "Reservada_Etiqueta_Pared_Abierto", 50);
+                                AgregarAListaTokens("< pared >", "Reservada_Etiqueta_Pared_Abierto", 50);
                                 // ESTADO 50
                             }
                             else if ((auxiliar == "<ventana>") || (auxiliar == "<VENTANA>") || (auxiliar == "<Ventana>"))
                             {
-                                auxiliar += caracter; 
-                                AgregarAListaTokens(auxiliar, "Reservada_Etiqueta_Ventana_Abierto", 70);
+                                AgregarAListaTokens("< ventana >", "Reservada_Etiqueta_Ventana_Abierto", 70);
                             }
                             else if ((auxiliar == "<puerta>") || (auxiliar == "<PUERTA>") || (auxiliar == "<Puerta>"))
                             {
-                                auxiliar += caracter; 
-                                AgregarAListaTokens(auxiliar, "Reservada_Etiqueta_Puerta_Abierto", 90);
+                                AgregarAListaTokens("< puerta >", "Reservada_Etiqueta_Puerta_Abierto", 90);
                             }
                             else if ((auxiliar == "<suelo>") || (auxiliar == "<SUELO>") || (auxiliar == "<Suelo>"))
                             {
-                                auxiliar += caracter; 
-                                AgregarAListaTokens(auxiliar, "Reservada_Etiqueta_Suelo_Abierto", 110);
+                                AgregarAListaTokens("< suelo >", "Reservada_Etiqueta_Suelo_Abierto", 110);
                             }
                             else
                             {
                                 auxiliar += caracter; 
-                                AgregarAListaErroresLexicos(auxiliar, "Etiqueta_No_Valida", 30);
+                                AgregarAListaErroresLexicos("<"+auxiliar+">", "Etiqueta_No_Valida", 30);
                             }
                         }
                         else if ((Saltos(caracter)) || (Espacio(caracter)))
@@ -532,6 +563,7 @@ namespace Proyecto21sem2018
                         {
                             estadoActual = 34;
                             auxiliar += caracter;
+                            ImprimirEnConsola();
                         }
                         else if ((Saltos(caracter)) || (Espacio(caracter)))
                         {
@@ -551,41 +583,38 @@ namespace Proyecto21sem2018
                         }
                         else if (MayorQue(caracter))
                         {
+                            auxiliar += caracter;
                             if ((auxiliar == "</terreno>") || (auxiliar == "</TERRENO>") || (auxiliar == "</Terreno>"))
                             {
-                                auxiliar += caracter;
-                                AgregarAListaTokens(auxiliar, "Reservada_Etiqueta_Terreno_Cerrado", 30);
+
+                                AgregarAListaTokens("< /terreno >", "Reservada_Etiqueta_Terreno_Cerrado", 30);
                             }
                             else if ((auxiliar == "</pared>") || (auxiliar == "</PARED>") || (auxiliar == "</Pared>"))
                             {
 
-                                auxiliar += caracter;
-                                AgregarAListaTokens(auxiliar, "Reservada_Etiqueta_Pared_Cerrado", 30);
+                                AgregarAListaTokens("<"+auxiliar+">", "Reservada_Etiqueta_Pared_Cerrado", 30);
                             }
                             else if ((auxiliar == "</ventana>") || (auxiliar == "</VENTANA>") || (auxiliar == "</Ventana>"))
                             {
-                                auxiliar += caracter;
-                                AgregarAListaTokens(auxiliar, "Reservada_Etiqueta_Ventana_Cerrado", 30);
+                                AgregarAListaTokens("<" + auxiliar + ">", "Reservada_Etiqueta_Ventana_Cerrado", 30);
                             }
                             else if ((auxiliar == "</puerta>") || (auxiliar == "</PUERTA>") || (auxiliar == "</Puerta>"))
                             {
-                                auxiliar += caracter;
-                                AgregarAListaTokens(auxiliar, "Reservada_Etiqueta_Puerta_Cerrado", 30);
+                                AgregarAListaTokens("<" + auxiliar + ">", "Reservada_Etiqueta_Puerta_Cerrado", 30);
                             }
                             else if ((auxiliar == "</suelo>") || (auxiliar == "</SUELO>") || (auxiliar == "</Suelo>"))
                             {
-                                auxiliar += caracter;
-                                AgregarAListaTokens(auxiliar, "Reservada_Etiqueta_Suelo_Cerrado", 30);
+                                AgregarAListaTokens("<" + auxiliar + ">", "Reservada_Etiqueta_Suelo_Cerrado", 30);
                             }
                             else if ((auxiliar == "</construccion>") || (auxiliar == "</CONSTRUCCION>") || (auxiliar == "</Construccion>"))
                             {
-                                auxiliar += caracter;
-                                AgregarAListaTokens(auxiliar, "Reservada_Etiqueta_Construccion_Cerrado", 0);
+                                ImprimirEnConsola();
+                                AgregarAListaTokens("<" + auxiliar + ">", "Reservada_Etiqueta_Construccion_Cerrado", 0);
                             }
                             else
                             {
                                 auxiliar += caracter;
-                                AgregarAListaErroresLexicos(auxiliar, "Etiqueta_No_Valida", 30);
+                                AgregarAListaErroresLexicos("<" + auxiliar + ">", "Etiqueta_No_Valida", 30);
                             }
                         }
                         else if ((Saltos(caracter)) || (Espacio(caracter)))
@@ -612,6 +641,10 @@ namespace Proyecto21sem2018
                         {
                             estadoActual = 31;
                             auxiliar += caracter; 
+                            AgregarTerreno(ancho = int.Parse(anch), largo = int.Parse(alt));
+                            anch = "";
+                            alt = "";
+
                         }
                         else
                         {
@@ -643,7 +676,7 @@ namespace Proyecto21sem2018
                         }
                         else if ((Saltos(caracter)) || (Espacio(caracter)))
                         {
-                            estadoActual = 40;
+                            estadoActual = 41;
                         }
                         else
                         {
@@ -730,7 +763,14 @@ namespace Proyecto21sem2018
                         else if (MenorQue(caracter))
                         {
                             estadoActual = 31;
-                            auxiliar += caracter; 
+                            auxiliar += caracter;
+                            AgregarPared(nomba, color, largo = int.Parse(alt), Iniciox = int.Parse(inix), Inicioy = int.Parse(iniy), FinX = int.Parse(finx), FinY = int.Parse(finy));
+                            nomba = "";
+                            color = "";
+                            inix = "";
+                            iniy = "";
+                            finx = "";
+                            finy = "";
                         }
                         else
                         {
@@ -1025,7 +1065,14 @@ namespace Proyecto21sem2018
                         else if (MenorQue(caracter))
                         {
                             estadoActual = 31;
-                            auxiliar += caracter; 
+                            auxiliar += caracter;
+                            AgregarVentana(nomba, tipo, ancho = int.Parse(lon), aso);
+                            nomba = "";
+                            tipo = "";
+                            lon = "";
+                            rad = "";
+                            aso = "";
+
                         }
                         else
                         {
@@ -1258,6 +1305,13 @@ namespace Proyecto21sem2018
                         {
                             estadoActual = 31;
                             auxiliar += caracter;
+                            AgregarPuerta(nomba, largo = int.Parse(alt), longo = double.Parse(anch), aso, color);
+                            nomba = "";
+                            alt = "";
+                            anch = "";
+                            aso = "";
+                            color = "";
+
                         }
                         else
                         {
@@ -1361,7 +1415,7 @@ namespace Proyecto21sem2018
                          if (CaracterNumerico(caracter))
                         {
                             estadoActual = 95;
-                            lon += caracter;
+                            alt += caracter;
                         }
                         else if (Saltos(caracter))
                             {
@@ -1494,6 +1548,9 @@ namespace Proyecto21sem2018
                         {
                             estadoActual = 31;
                             auxiliar += caracter;
+                            AgregarSuelo(nomba, color);
+                            nomba = "";
+                            color = "";
                         }
                         else
                         {
@@ -1610,11 +1667,556 @@ namespace Proyecto21sem2018
                     case 120:
                         Analizador_Sintactico();
                         break; 
+                    case 130:
+                        if (Resta(caracter))
+                        {
+                            estadoActual = 131;
+                            auxiliar += caracter;
+                        }
+                        else
+                        {
+                            estadoActual = 2222;
+                            auxiliar += caracter;
+                        } break; 
+                    case 131:
+                        if (Espacio(caracter))
+                        {
+                            estadoActual = 131;
+                            auxiliar += caracter;
+                        }
+                        else if (Resta(caracter))
+                        {
+                            estadoActual = 132;
+                            auxiliar += caracter;
+                        }
+                        else
+                        {
+                            estadoActual = 2222;
+                            auxiliar += caracter;
+                        }
+                        break; 
+                    case 132:
+                        if (Resta(caracter))
+                        {
+                            estadoActual = 133;
+                            auxiliar += caracter;
+                        }
+                        else
+                        {
+                            estadoActual = 132;
+                            auxiliar += caracter;
+                        }
+                        break; 
+                    case 133:
+                        if (Resta(caracter))
+                        {
+                            estadoActual = 134;
+                            auxiliar += caracter;
+                        }
+                        else
+                        {
+                            estadoActual = 2222;
+                            auxiliar += caracter;
+                        }
+                        break; 
+                    case 134:
+                        if (MayorQue(caracter))
+                        {
+                            auxiliar += caracter;
+                            AgregarAListaTokens(auxiliar, "Token_Comentarios", 0);
+                        }
+                        else
+                        {
+                            estadoActual = 2222;
+                            auxiliar += caracter;
+                        }
+                        break; 
+                    case 140:
+                        if (Suma(caracter))
+                        {
+                            if (validacionDeVariable(valor1))
+                            {
+                                AgregarAListaTokens(valor1, "Token_Variable", 141);
+                            }
+                            else 
+                            {
+                                AgregarAListaTokens(valor1, "Token_Variable_No_Declarada", 0);
+                                valor1 = "";
+                                MessageBox.Show("Esta variable no existe");
+                            }
+                        } else if(Resta(caracter)){
+                            if (validacionDeVariable(valor1))
+                            {
+                                AgregarAListaTokens(valor1, "Token_Variable", 151);
+                            }
+                            else
+                            {
+                                AgregarAListaTokens(valor1, "Token_Variable_No_Declarada", 0);
+                                valor1 = "";
+                                MessageBox.Show("Esta variable no existe");
+                            }
+                        }
+                        else if (Asterisco(caracter))
+                        {
+                            if (validacionDeVariable(valor1))
+                            {
+                                AgregarAListaTokens(valor1, "Token_Variable", 161);
+                            }
+                            else
+                            {
+                                AgregarAListaTokens(valor1, "Token_Variable_No_Declarada", 0);
+                                valor1 = "";
+                                MessageBox.Show("Esta variable no existe");
+                            }
+                        }
+                        else if (Slash(caracter))
+                        {
+                            if (validacionDeVariable(valor1))
+                            {
+                                AgregarAListaTokens(valor1, "Token_Variable", 171);
+                            }
+                            else
+                            {
+                                AgregarAListaTokens(valor1, "Token_Variable_No_Declarada", 0);
+                                MessageBox.Show("Esta variable no existe");
+                            }
+                        }
+                        else if ((Saltos(caracter)) || (Espacio(caracter)))
+                        {
+                            estadoActual = 140;
+                        }
+                        else
+                        {
+                            estadoActual = 140;
+                            valor1 += caracter; 
+                        }
+                        break; 
+                    case 141:
+                        if ((CaracterMinuscula(caracter)) || (CaracterMayuscula(caracter)))
+                        {
+                            estadoActual = 142;
+                            valor2 += caracter;
+                        }
+                        else if ((Saltos(caracter)) || (Espacio(caracter)))
+                        {
+                            estadoActual = 141;
+                        } else if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 143;
+                            valor2 += caracter;
+                        }
+                        else
+                        {
+                            estadoActual = 2222;
+                            valor2 += caracter;
+                        }
+                        break; 
+                    case 142:
+                        if (Igual(caracter))
+                        {
+                            MessageBox.Show("Este es el resultado ---->"+ OperacionSuma(retornarValorVariable(valor1), retornarValorVariable(valor2)));
+                            AgregarAListaTokens(valor2, "Token_Variable", 0);
+                            LimpiarVariables();
+                        }
+                        else if ((Saltos(caracter)) || (Espacio(caracter)))
+                        {
+                            estadoActual = 142;
+                        }
+                        else
+                        {
+                            estadoActual = 142;
+                            valor2 += caracter;
+                        }
+                        break; 
+                    case 143:
+                        if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 143;
+                            valor2 += caracter;
+                        }
+                        else if (Igual(caracter))
+                        {
+                            MessageBox.Show("Este es el resultado ---->" + OperacionSuma(retornarValorVariable(valor1), retornarValorVariable(valor2)));
+                            AgregarAListaTokens(valor2, "Token_Variable", 0);
+                            LimpiarVariables();
+
+                        }
+                        else if ((Saltos(caracter)) || (Espacio(caracter)))
+                        {
+                            estadoActual = 142;
+                        }
+                        else
+                        {
+                            estadoActual = 2222;
+                            valor2 += caracter; 
+                        }
+                        break; 
+                    case 151:
+                         if ((CaracterMinuscula(caracter)) || (CaracterMayuscula(caracter)))
+                        {
+                            estadoActual = 152;
+                            valor2 += caracter;
+                        }
+                        else if ((Saltos(caracter)) || (Espacio(caracter)))
+                        {
+                            estadoActual = 151;
+                        } else if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 153;
+                            valor2 += caracter;
+                        }
+                        else
+                        {
+                            estadoActual = 2222;
+                            valor2 += caracter;
+                        }
+                        break; 
+                    case 152:
+                        if (Igual(caracter))
+                        {
+                            MessageBox.Show("Este es el resultado ---->"+ OperacionResta(retornarValorVariable(valor1), retornarValorVariable(valor2)));
+                            AgregarAListaTokens(valor2, "Token_Variable", 0);
+                            LimpiarVariables();
+                        }
+                        else if ((Saltos(caracter)) || (Espacio(caracter)))
+                        {
+                            estadoActual = 152;
+                        }
+                        else
+                        {
+                            estadoActual = 152;
+                            valor2 += caracter;
+                        }
+                        break; 
+                    case 153: 
+                        if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 153;
+                            valor2 += caracter;
+                        }
+                        else if (Igual(caracter))
+                        {
+                            MessageBox.Show("Este es el resultado ---->" + OperacionResta(retornarValorVariable(valor1), retornarValorVariable(valor2)));
+                            AgregarAListaTokens(valor2, "Token_Variable", 0);
+                            LimpiarVariables();
+
+                        }
+                        else if ((Saltos(caracter)) || (Espacio(caracter)))
+                        {
+                            estadoActual = 153;
+                        }
+                        else
+                        {
+                            estadoActual = 2222;
+                            valor2 += caracter; 
+                        }
+                        break; 
+                    case 161:
+                          if ((CaracterMinuscula(caracter)) || (CaracterMayuscula(caracter)))
+                        {
+                            estadoActual = 162;
+                            valor2 += caracter;
+                        }
+                        else if ((Saltos(caracter)) || (Espacio(caracter)))
+                        {
+                            estadoActual = 161;
+                        } else if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 163;
+                            valor2 += caracter;
+                        }
+                        else
+                        {
+                            estadoActual = 2222;
+                            valor2 += caracter;
+                        }
+                        break; 
+                    case 162:
+                         if (Igual(caracter))
+                        {
+                            MessageBox.Show("Este es el resultado ---->"+ OperacionMultiplicacion(retornarValorVariable(valor1), retornarValorVariable(valor2)));
+                            AgregarAListaTokens(valor2, "Token_Variable", 0);
+                            LimpiarVariables();
+                        }
+                        else if ((Saltos(caracter)) || (Espacio(caracter)))
+                        {
+                            estadoActual = 162;
+                        }
+                        else
+                        {
+                            estadoActual = 162;
+                            valor2 += caracter;
+                        }
+                        break; 
+                    case 163:
+                         if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 163;
+                            valor2 += caracter;
+                        }
+                        else if (Igual(caracter))
+                        {
+                            MessageBox.Show("Este es el resultado ---->" + OperacionMultiplicacion(retornarValorVariable(valor1), retornarValorVariable(valor2)));
+                            AgregarAListaTokens(valor2, "Token_Variable", 0);
+                            LimpiarVariables();
+
+                        }
+                        else if ((Saltos(caracter)) || (Espacio(caracter)))
+                        {
+                            estadoActual = 163;
+                        }
+                        else
+                        {
+                            estadoActual = 2222;
+                            valor2 += caracter; 
+                        }
+                        break; 
+                    case 171:
+                           if ((CaracterMinuscula(caracter)) || (CaracterMayuscula(caracter)))
+                        {
+                            estadoActual = 172;
+                            valor2 += caracter;
+                        }
+                        else if ((Saltos(caracter)) || (Espacio(caracter)))
+                        {
+                            estadoActual = 171;
+                        } else if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 173;
+                            valor2 += caracter;
+                        }
+                        else
+                        {
+                            estadoActual = 2222;
+                            valor2 += caracter;
+                        }
+                        break; 
+                    case 172:
+                          if (Igual(caracter))
+                        {
+                            MessageBox.Show("Este es el resultado ---->"+ OperacionDivision(retornarValorVariable(valor1), retornarValorVariable(valor2)));
+                            AgregarAListaTokens(valor2, "Token_Variable", 0);
+                            LimpiarVariables();
+                        }
+                        else if ((Saltos(caracter)) || (Espacio(caracter)))
+                        {
+                            estadoActual = 172;
+                        }
+                        else
+                        {
+                            estadoActual = 172;
+                            valor2 += caracter;
+                        }
+                        break; 
+                    case 173:
+                        if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 173;
+                            valor2 += caracter;
+                        }
+                        else if (Igual(caracter))
+                        {
+                            MessageBox.Show("Este es el resultado ---->" + OperacionDivision(retornarValorVariable(valor1), retornarValorVariable(valor2)));
+                            AgregarAListaTokens(valor2, "Token_Variable", 0);
+                            LimpiarVariables();
+
+                        }
+                        else if ((Saltos(caracter)) || (Espacio(caracter)))
+                        {
+                            estadoActual = 173;
+                        }
+                        else
+                        {
+                            estadoActual = 2222;
+                            valor2 += caracter;
+                        }
+                        break; 
+                    case 240:
+                        if (Suma(caracter))
+                        {
+                            AgregarAListaTokens(valor1, "ID_Numerico", 241);
+                        }
+                        else if (Resta(caracter))
+                        {
+                            AgregarAListaTokens(valor1, "ID_Numerico", 251);
+                        }
+                        else if (Asterisco(caracter))
+                        {
+                            AgregarAListaTokens(valor1, "ID_Numerico", 261);
+                        }
+                        else if (Slash(caracter))
+                        {
+                            AgregarAListaTokens(valor1, "ID_Numerico", 271);
+                        }
+                        else if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 240;
+                            valor1 += caracter;
+                        }
+                        else
+                        {
+                            estadoActual = 2222;
+                            valor1 += caracter; 
+                        }
+
+                        break; 
+                    case 241:
+                        if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 242;
+                            valor2 += caracter;
+                        }
+                        else if ((Saltos(caracter)) || (Espacio(caracter)))
+                        {
+                            estadoActual = 241;
+                        }
+                        else
+                        {
+                            estadoActual = 2222;
+                            valor2 += caracter;
+                        }
+                        break; 
+                    case 242:
+                        if (Igual(caracter))
+                        {
+                            AgregarAListaTokens(valor2, "ID_Numerico", 0);
+                            MessageBox.Show("El resultado es --->"+OperacionSuma(int.Parse(valor1), int.Parse(valor2)));
+                            LimpiarVariables();
+                        }
+                        else if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 242;
+                            valor2 += caracter;
+                        }
+                        else if ((Saltos(caracter)) || (Espacio(caracter)))
+                        {
+                            estadoActual = 242;
+                        }
+                        else
+                        {
+                            estadoActual = 2222;
+                            valor2 += caracter;
+                        }
+                        break; 
+                    case 251:
+                         if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 252;
+                            valor2 += caracter;
+                        }
+                        else if ((Saltos(caracter)) || (Espacio(caracter)))
+                        {
+                            estadoActual = 251;
+                        }
+                        else
+                        {
+                            estadoActual = 2222;
+                            valor2 += caracter;
+                        }
+                        break; 
+                    case 252:
+                         if (Igual(caracter))
+                        {
+                            AgregarAListaTokens(valor2, "ID_Numerico", 0);
+                            MessageBox.Show("El resultado es --->"+OperacionResta(int.Parse(valor1), int.Parse(valor2)));
+                            LimpiarVariables();
+                        }
+                        else if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 252;
+                            valor2 += caracter;
+                        }
+                        else if ((Saltos(caracter)) || (Espacio(caracter)))
+                        {
+                            estadoActual = 252;
+                        }
+                        else
+                        {
+                            estadoActual = 2222;
+                            valor2 += caracter;
+                        }
+                        break; 
+                    case 261:
+                          if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 262;
+                            valor2 += caracter;
+                        }
+                        else if ((Saltos(caracter)) || (Espacio(caracter)))
+                        {
+                            estadoActual = 261;
+                        }
+                        else
+                        {
+                            estadoActual = 2222;
+                            valor2 += caracter;
+                        }
+                        break; 
+                    case 262:
+                        if (Igual(caracter))
+                        {
+                            AgregarAListaTokens(valor2, "ID_Numerico", 0);
+                            MessageBox.Show("El resultado es --->" + OperacionMultiplicacion(int.Parse(valor1), int.Parse(valor2)));
+                            LimpiarVariables();
+                        }
+                        else if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 262;
+                            valor2 += caracter;
+                        }
+                        else if ((Saltos(caracter)) || (Espacio(caracter)))
+                        {
+                            estadoActual = 262;
+                        }
+                        else
+                        {
+                            estadoActual = 2222;
+                            valor2 += caracter;
+                        }
+                        break; 
+                    case 271:
+                           if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 272;
+                            valor2 += caracter;
+                        }
+                        else if ((Saltos(caracter)) || (Espacio(caracter)))
+                        {
+                            estadoActual = 271;
+                        }
+                        else
+                        {
+                            estadoActual = 2222;
+                            valor2 += caracter;
+                        }
+                        break; 
+                    case 272:
+                        if (Igual(caracter))
+                        {
+                            AgregarAListaTokens(valor2, "ID_Numerico", 0);
+                            MessageBox.Show("El resultado es --->" + OperacionDivision(int.Parse(valor1), int.Parse(valor2)));
+                            LimpiarVariables();
+                        }
+                        else if (CaracterNumerico(caracter))
+                        {
+                            estadoActual = 272;
+                            valor2 += caracter;
+                        }
+                        else if ((Saltos(caracter)) || (Espacio(caracter)))
+                        {
+                            estadoActual = 282;
+                        }
+                        else
+                        {
+                            estadoActual = 2222;
+                            valor2 += caracter;
+                        }
+                        break; 
                     case 1111: 
                          if (MayorQue(caracter))
                         {
                             AgregarAListaErroresLexicos(auxiliar, "Etiqueta_No_Valida", 0);
-                            
+                            LimpiarVariables();
 
                         }
                         else
@@ -1627,7 +2229,7 @@ namespace Proyecto21sem2018
                          if ((Saltos(caracter)))
                         {
                             AgregarAListaErroresLexicos(auxiliar, "Valor no reconocido", 10);
-
+                            LimpiarVariables();
                         }
                         else
                         {
@@ -1639,7 +2241,7 @@ namespace Proyecto21sem2018
                         if ((Saltos(caracter)))
                         {
                             AgregarAListaErroresLexicos(auxiliar, "Valor no reconocido", 30);
-
+                            LimpiarVariables();
                         }
                         else
                         {
@@ -1912,7 +2514,6 @@ namespace Proyecto21sem2018
                          }
                          break; 
                     case 99:
-                         MessageBox.Show("Se ha terminado la compilación :D");
                          break; 
                 }
             }
@@ -1969,8 +2570,8 @@ namespace Proyecto21sem2018
 
         }
 
-        public void AgregarVentana(string nombre, string tipo, int longitud, double radio, string pared){
-            Ventana.Add(new ventana(nombre, tipo, longitud, radio, pared));
+        public void AgregarVentana(string nombre, string tipo, int longitud, string pared){
+            Ventana.Add(new ventana(nombre, tipo, longitud, pared));
         }
 
         public void AgregarPared(string nombre, string color, int alto, int inicioX, int inicioY, int finX, int finY)
@@ -1998,9 +2599,65 @@ namespace Proyecto21sem2018
             Console.WriteLine("Así va la cadena --->  " + auxiliar);
         }
 
+        public void ImprimirEnConsolaLista()
+        {
+            for (int i = 0; i <= ListaT.Count - 1; i++)
+            {
+                Console.WriteLine("Estos lexemas tiene --->" + ListaT[i].Lexema);
+            }
+        }
+
+        //DISEÑO DE LAS FIGURAS
+        public void DiseñarParedes(){
+        
 
 
+        }
 
+        public void DiseñarSuelo()
+        {
+
+        }
+
+        public void diseñarPuerta()
+        {
+            
+        }
+
+        public void diseñarVentanas()
+        {
+           
+        }
+        //MÉTODOS DE LIMPIEZA DE VARIABLES
+        public void LimpiarVariables()
+        {
+            resultado = 0;
+            nombre = "";
+            tipo = "";
+            valor = "";
+            nomba = "";
+            color = "";
+            alt = "";
+            anch = "";
+            inix = "";
+            iniy = "";
+            finx = "";
+            finy = "";
+            tipA = "";
+            lon = "";
+            aso = "";
+            rad = "";
+            valor1 = "";
+            valor2 = "";
+            ancho = 0;
+            longo = 0;
+            largo = 0;
+            Iniciox = 0;
+            Inicioy = 0;
+            FinX = 0;
+            FinY = 0;
+            radio = 0; 
+        }
 
         //MÉTODOS PARA EL REPORTE DE TOKENS Y EL DE ERRORES
         public void generarHTMLTokens()
@@ -2008,7 +2665,9 @@ namespace Proyecto21sem2018
             StreamWriter html = new StreamWriter("salidaTokens.html");
             html.Write("<html>");
             html.Write("<head>");
+            html.Write("<uft>");
             html.Write("Archivo de Salida, bienvenidos sean, UNIVERSIDAD DE SAN CARLOS DE GUATEMALA");
+            html.Write("<meta http-equiv=" + "Content-Type" + "content=" + "text/html; charset=utf-8" + "/>");
             html.Write("</head>");
             html.Write("<body>");
             html.Write("<p> Tabla de Tokens Léxicos</p>");
@@ -2035,7 +2694,7 @@ namespace Proyecto21sem2018
             for (int j = 0; j <= ListasT.Count - 1; j++)
             {
                 html.Write("<tr>");
-                html.Write("<td>" + this.ListasT[j].Lexema + "</td>");
+                html.Write("<td>" + ListasT[j].Lexema + "</td>");
 
                 html.Write("<td>" + this.ListasT[j].Tipo + "</td>");
                 html.Write("</tr>");
@@ -2092,8 +2751,72 @@ namespace Proyecto21sem2018
 
         }
 
+        //Retornos
+        public int retornarValorVariable(string valor)
+        {
+            for (int i = 0; i < ListaVar.Count; i++)
+            {
+                if ((validacionDeVariable(valor))&(ListaVar[i].Tipo == "entero"))
+                {
+                    return int.Parse(ListaVar[i].Valor);
+                }
+                else
+                {
+                    i++;
+                }
+            } return 0;  
+        }
+        public double retornarValorDoble()
+        {
+            for (int i = 0; i < ListaVar.Count; i++)
+            {
+                if (ListaVar[i].Tipo == "doble")
+                {
+                    return double.Parse(ListaVar[i].Valor);
+                }
+                else
+                {
+                    i++;
+                }
+            } return 0;  
+        }
 
+        //Operaciones
+        public int OperacionSuma(int a, int b)
+        {
+            return a + b; 
+        }
 
+        public int OperacionResta(int a, int b)
+        {
+            return a - b; 
+        }
+
+        public int OperacionMultiplicacion(int a, int b)
+        {
+            return a * b;
+        }
+
+        public int OperacionDivision(int a, int b)
+        {
+            return a / b;
+        }
+
+        //Retornar si existe la variable
+        public bool validacionDeVariable(string variable)
+        {
+            for (int i = 0; i < ListaVar.Count; i++)
+            {
+                if (ListaVar[i].Nombre == variable)
+                {
+                    return true;
+                }
+                else
+                {
+                    i++;
+                }
+            } return false;  
+        }
         //Todos estos métodos son para reconocer un caracter en específico, valuándolos con su valor en ASCII
         public Boolean CaracterMinuscula(char valor)
         {
@@ -2317,7 +3040,17 @@ namespace Proyecto21sem2018
             else
                 return false;
         }
-    
+        public Boolean Admiracion(char valor)
+        {
+            if (valor == 33)
+            {
+                return true;
+            }
+            else
+            {
+                return false; 
+            }
+        }
        
     }
 }

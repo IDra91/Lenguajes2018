@@ -7,13 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Text;
 using System.IO;
 
 namespace Proyecto21sem2018
 {
     public partial class Form1 : Form
     {
+        string filename = "Manual_Tecnico.pdf";
+        string filename2 = "Manual_Usuario.pdf";
         scanner s = new scanner();
         public Form1()
         {
@@ -55,7 +56,7 @@ namespace Proyecto21sem2018
         {
             Stream myStream;
             OpenFileDialog of = new OpenFileDialog();
-            of.DefaultExt = "*.desgin";
+            of.DefaultExt = "*.design";
             of.Filter = "DESIGN Files|*.design";
             if (of.ShowDialog() == System.Windows.Forms.DialogResult.OK && of.FileName.Length > 0)
             {
@@ -107,6 +108,16 @@ namespace Proyecto21sem2018
         private void tokensToolStripMenuItem_Click(object sender, EventArgs e)
         {
             s.generarHTMLTokens();
+        }
+
+        private void manualTécnicoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(filename);
+        }
+
+        private void manualDeUsuarioToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(filename2);
         }
     }
 }

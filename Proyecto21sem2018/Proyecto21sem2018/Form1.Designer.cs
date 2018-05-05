@@ -160,12 +160,14 @@
             this.manualTécnicoToolStripMenuItem.Name = "manualTécnicoToolStripMenuItem";
             this.manualTécnicoToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.manualTécnicoToolStripMenuItem.Text = "Manual Técnico";
+            this.manualTécnicoToolStripMenuItem.Click += new System.EventHandler(this.manualTécnicoToolStripMenuItem_Click);
             // 
             // manualDeUsuarioToolStripMenuItem
             // 
             this.manualDeUsuarioToolStripMenuItem.Name = "manualDeUsuarioToolStripMenuItem";
             this.manualDeUsuarioToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.manualDeUsuarioToolStripMenuItem.Text = "Manual de Usuario";
+            this.manualDeUsuarioToolStripMenuItem.Click += new System.EventHandler(this.manualDeUsuarioToolStripMenuItem_Click);
             // 
             // acercaDeToolStripMenuItem
             // 
